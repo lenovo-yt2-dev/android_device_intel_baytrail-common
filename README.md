@@ -1,4 +1,4 @@
-## Copyright
+## Common device tree for Intel Baytrail tablets
 
 ```
 #

@@ -14,36 +14,38 @@
 # limitations under the License.
 #
 
-# Platform
-TARGET_BOARD_PLATFORM := baytrail
-# Bootloader
-TARGET_NO_BOOTLOADER := true
-TARGET_BOOTLOADER_BOARD_NAME := $(TARGET_BOARD_PLATFORM)
-# Architecture
+TARGET_ARCH := x86
 TARGET_ARCH_VARIANT := silvermont
-# Binder
+TARGET_CPU_ABI := x86
+TARGET_CPU_ABI2 := armeabi-v7a
+TARGET_CPU_ABI_LIST := x86,armeabi-v7a,armeabi
+TARGET_CPU_ABI_LIST_32_BIT := x86,armeabi-v7a,armeabi
+TARGET_CPU_SMP := true
+TARGET_PRELINK_MODULE := false
+
+TARGET_BOARD_PLATFORM := baytrail
+TARGET_NO_BOOTLOADER := true
+TARGET_BOOTLOADER_BOARD_NAME := baytrail
 TARGET_USES_64_BIT_BINDER := true
-# Install Native Bridge
 WITH_NATIVE_BRIDGE := true
 
-include device/aosp4ia/intel_base/intel_board.mk
+# Adb
+BOARD_FUNCTIONFS_HAS_SS_COUNT := true
 
-#==============================================================================#
-# kernel :
-#==============================================================================#
-KERNEL_LOGLEVEL ?= 5
-BOARD_KERNEL_CMDLINE += loglevel=$(KERNEL_LOGLEVEL) androidboot.hardware=$(TARGET_DEVICE)
+# Inline kernel building
+TARGET_KERNEL_ARCH := x86_64
+BOARD_KERNEL_IMAGE_NAME := bzImage
 
-#==============================================================================#
-# Hardware Accelerated Graphics :
-#==============================================================================#
+# Kernel cmdline
+BOARD_KERNEL_CMDLINE := loglevel=4 console=logk0 earlyprintk=nologger androidboot.bootmedia=sdcard androidboot.hardware=byt_t_ffrd8 watchdog.watchdog_thresh=60 androidboot.spid=xxxx:xxxx:xxxx:xxxx:xxxx:xxxx androidboot.serialno=01234567890123456789 oops=panic panic=40 vmalloc=172M debug_locks=0 bootboost=1 vga=current i915.modeset=1 drm.vblankoffdelay=1 acpi_backlight=vendor i915.mipi_panel_id=3 androidboot.selinux=permissive
+
+# Init
+TARGET_IGNORE_RO_BOOT_SERIALNO := true
+
+# Hardware Accelerated Graphics
 ENABLE_GEN_GRAPHICS := true
 
-# Baytrail appends the path to EGL libraries.
-PRODUCT_LIBRARY_PATH := $(PRODUCT_LIBRARY_PATH):/system/lib/egl
-
 # EGL config
-#BOARD_EGL_CFG ?= $(TARGET_DEVICE_DIR)/egl.cfg
 BOARD_ALLOW_EGL_HIBERNATION := true
 
 # Select ufo gen7 libs
@@ -52,7 +54,6 @@ UFO_ENABLE_GEN := gen7
 # Defines Intel library for GPU accelerated Renderscript:
 OVERRIDE_RS_DRIVER := libRSDriver_intel7.so
 
-BOARD_KERNEL_CMDLINE += vga=current i915.modeset=1 drm.vblankoffdelay=1 i915.fastboot=1
 USE_OPENGL_RENDERER := true
 USE_INTEL_UFO_DRIVER := true
 USE_INTEL_UFO_OPENCL := true
@@ -71,27 +72,11 @@ SF_VSYNC_EVENT_PHASE_OFFSET_NS := 5000000
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 TARGET_INTEL_HWCOMPOSER_FORCE_ONLY_ONE_RGB_LAYER := true
 
-#==============================================================================#
-# File System :
-#==============================================================================#
-BOARD_SYSTEMIMAGE_PARTITION_SIZE ?= 2684354560
-BOARD_BOOTLOADER_PARTITION_SIZE ?= 62914560
-BOARD_FLASH_BLOCK_SIZE := 512
-
-TARGET_USERIMAGES_USE_EXT4 := true
-TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
-
-#==============================================================================#
-# Recovery / OTA :
-#==============================================================================#
-# By default recovery minui expects RGBA framebuffer
+# Recovery
 TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
-# Tell build system where to get the recovery.fstab.
-TARGET_RECOVERY_FSTAB ?= $(TARGET_DEVICE_DIR)/fstab
+COMMON_GLOBAL_CFLAGS += -DNO_SECURE_DISCARD
 
-#==============================================================================#
-# Audio :
-#==============================================================================#
+# Audio
 BOARD_USES_ALSA_AUDIO := false
 BOARD_USES_TINY_ALSA_AUDIO := true
 BOARD_USES_AUDIO_HAL_XML := true
@@ -103,9 +88,7 @@ endif
 
 BOARD_USES_GENERIC_AUDIO := false
 
-#==============================================================================#
-# Media :
-#==============================================================================#
+# Media
 BUILD_WITH_FULL_STAGEFRIGHT := true
 INTEL_STAGEFRIGHT := true
 
@@ -132,7 +115,22 @@ BOARD_USE_LIBMIX := true
 USE_INTEL_VA := true
 INTEL_VA := true
 
-#==============================================================================#
+INTEL_INGREDIENTS_VERSIONS := true
+
+# Enable Minikin text layout engine
+USE_MINIKIN := true
+
+# Include an expanded selection of fonts
+EXTENDED_FONT_FOOTPRINT := true
+
+# Dex-preoptimization: Speeds up initial boot (if we ever do a user build, which we don't)
+ifeq ($(HOST_OS),linux)
+  ifeq ($(TARGET_BUILD_VARIANT),user)
+    ifeq ($(WITH_DEXPREOPT),)
+      WITH_DEXPREOPT := true
+    endif
+  endif
+endif
 
 # Use dlmalloc
 MALLOC_IMPL := dlmalloc
@@ -145,22 +143,6 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 BOARD_CHARGER_SHOW_PERCENTAGE := true
 BOARD_CHARGER_DISABLE_INIT_BLANK := true
 
-# Init
-TARGET_PROVIDES_INIT_RC := true
-
-# Define platform battery healthd library
-#BOARD_HAL_STATIC_LIBRARIES += libhealthd.intel
-
 # Security
 BUILD_WITH_CHAABI_SUPPORT := true
 BUILD_WITH_WATCHDOG_DAEMON_SUPPORT := true
-
-# SELinux Policy : baytrail
--include device/aosp4ia/intel_base/baytrail/baytrail_sepolicy.mk
-
-# start kernel in permissive mode, this way we don't
-# need 'setenforce 0' from init.rc files
-BOARD_KERNEL_CMDLINE += enforcing=0 androidboot.selinux=permissive
-
-# Use the non-open-source parts, if they're present
--include vendor/aosp4ia/baytrail/BoardConfigVendor.mk

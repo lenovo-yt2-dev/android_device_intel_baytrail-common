@@ -1,4 +1,7 @@
 # Additional service_contexts rules
+securityfile                              u:object_r:securityfile_service:s0
+security                                  u:object_r:securitymanager_service:s0
+awareservice                              u:object_r:system_server_service:s0
 oemtelephony                              u:object_r:radio_service:s0
 android.hardware.intel.coreu              u:object_r:coreu_service:s0
 display.intel.mds                         u:object_r:display_service:s0

@@ -14,13 +14,7 @@
 # limitations under the License.
 #
 
-#==============================================================================#
-# Kernel
-#==============================================================================#
-
-#==============================================================================#
 # Audio
-#==============================================================================#
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
     audio.r_submix.default \
@@ -41,35 +35,19 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.audio.low_latency.xml:system/etc/permissions/android.hardware.audio.low_latency.xml
 
-#==============================================================================#
-# Camera
-#==============================================================================#
-PRODUCT_PACKAGES += Camera2
-
-#==============================================================================#
 # Charger
-#==============================================================================#
-PRODUCT_PACKAGES += charger charger_res_images
+PRODUCT_PACKAGES += \
+    charger \
+    charger_res_images
 
-#==============================================================================#
 # Filesystem management tools
-#==============================================================================#
 PRODUCT_PACKAGES += \
     e2fsck \
     resize2fs \
     setup_fs \
     tune2fs
 
-#==============================================================================#
-# Libraries
-#==============================================================================#
-PRODUCT_PACKAGES += \
-    minizip \
-    openssl
-
-#==============================================================================#
 # Hardware Accelerated Graphics
-#==============================================================================#
 PRODUCT_PACKAGES += \
     libdrm \
     libdrm_intel \
@@ -89,9 +67,7 @@ PRODUCT_PACKAGES += ufo libivp libpavp
 
 PRODUCT_PROPERTY_OVERRIDES += ro.opengles.version = 196609
 
-#==============================================================================#
 # Media
-#==============================================================================#
 PRODUCT_COPY_FILES += \
     frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
@@ -110,10 +86,10 @@ PRODUCT_PACKAGES += \
     libgabi++-mfx \
     libstlport-mfx
 
-#enable Widevine drm
+# Enable Widevine drm
 PRODUCT_PROPERTY_OVERRIDES += drm.service.enabled=true
 
-# omx components
+# OMX components
 PRODUCT_PACKAGES += \
     libwrs_omxil_base \
     libwrs_omxil_common \
@@ -146,58 +122,38 @@ PRODUCT_PACKAGES += \
     libva-tpi.so \
     vainfo
 
-
 # Decoding MPEG4-ASP/H263
 PRODUCT_PACKAGES += libintelmetadatabuffer
 
 # Media: libISV
 PRODUCT_PACKAGES += libisv_omx_core
 
-#==============================================================================#
-# Ramdisk :
-#==============================================================================#
-PRODUCT_COPY_FILES += \
+# Ramdisk
 
 ADDITIONAL_DEFAULT_PROPERTIES += ro.sys.powerctl.no.shutdown=1
 
-
-#==============================================================================#
 # Thermal itux
-#==============================================================================#
 ENABLE_ITUXD := true
 PRODUCT_PACKAGES += ituxd
 
-#==============================================================================#
 # Touch
-#==============================================================================#
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
     frameworks/native/data/etc/android.hardware.touchscreen.xml:system/etc/permissions/android.hardware.touchscreen.xml
 
-#==============================================================================#
 # usb accessory
-#==============================================================================#
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
     frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml
 
 PRODUCT_PACKAGES += com.android.future.usb.accessory
 
-#==============================================================================#
-#
-#==============================================================================#
 PRODUCT_CHARACTERISTICS := tablet
 
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/tablet_core_hardware.xml:system/etc/permissions/tablet_core_hardware.xml
 
-#==============================================================================#
 # This is needed to enable silver art optimizer.
 # This will build the plugins/libart-extension.so library, which is dynamically loaded by
 # AOSP and contains Intel optimizations to the compiler.
-#==============================================================================#
 PRODUCT_PACKAGES += libart-extension
-
-#==============================================================================#
-
-$(call inherit-product-if-exists, vendor/aosp4ia/intel_base/baytrail_base/baytrail_base-vendor.mk)

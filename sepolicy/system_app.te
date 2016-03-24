@@ -1,4 +1,5 @@
 # Additional system_app rules
+allow system_app securitymanager_service:service_manager add;
 allow system_app self:netlink_kobject_uevent_socket { create setopt bind read };
 allow system_app log_file:dir { rw_dir_perms setattr };
 allow system_app log_file:file create_file_perms;

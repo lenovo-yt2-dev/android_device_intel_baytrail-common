@@ -1,9 +1,16 @@
+type securityfile_service,     service_manager_type;
+type securitymanager_service,  service_manager_type;
+
 type coreu_service,            service_manager_type;
+
 # display.intel.mds
 type display_service,          service_manager_type;
+
 # com.intel.cws.cwsservicemanager
 type cws_service,              service_manager_type;
+
 # hwc.info
 type hwc_service,              service_manager_type;
+
 #com.intel.security.service.ISEPService
 type ISEP_service,             service_manager_type;
